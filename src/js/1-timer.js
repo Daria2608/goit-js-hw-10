@@ -13,16 +13,16 @@ import iconError from "../img/icon.svg"
 //Обираємо елемент 
 const input = document.querySelector('#datetime-picker')
 const button = document.querySelector('button')
-const day = document.querySelector('[data-days]')
-const minute = document.querySelector('[data-minutes]')
-const hour = document.querySelector('[data-hours]')
-const second = document.querySelector('[data-seconds]')
+const dayElement = document.querySelector('[data-days]')
+const minuteElement = document.querySelector('[data-minutes]')
+const hourElement = document.querySelector('[data-hours]')
+const secondElement = document.querySelector('[data-seconds]')
 const labels = document.querySelectorAll('.label');
 labels.forEach(label => { label.textContent = label.textContent.toUpperCase() })
 
 
 // Функція, щоб 0 додавати
-function addZero(value) {
+function addLeadingZero(value) {
     if (value < 10) {
         return '0' + value
     }
@@ -53,7 +53,10 @@ function convertMs(ms) {
 
 let difference = 0;
 let intervalId = 0;
+let userSelectedDate = null;
 // різниця часу
+
+button.disabled = true;
 
 //Об'єкт параметрів для роботи з календарем
 const options = {
@@ -65,17 +68,17 @@ const options = {
         if (!selectedDates || selectedDates.length === 0) {
             return;
         }
-            let userSelectedDate = selectedDates && selectedDates[0] ?
+             userSelectedDate = selectedDates && selectedDates[0] ?
                 new Date(selectedDates[0]).getTime() : null;
             let timeNow = Date.now();
             if (userSelectedDate > timeNow) {
                 button.disabled = false;
                 difference = userSelectedDate - timeNow;
                 const { days, hours, minutes, seconds } = convertMs(difference);
-                day.textContent = addZero(days);
-                hour.textContent = addZero(hours);
-                minute.textContent = addZero(minutes);
-                second.textContent = addZero(seconds);
+                dayElement.textContent = addZero(days);
+                hourElement.textContent = addZero(hours);
+                minuteElement.textContent = addZero(minutes);
+                secondElement.textContent = addZero(seconds);
             }
             else {
                 iziToast.error({
@@ -106,20 +109,23 @@ function startTimer() {
 }
 
 function timer() {
-    if (difference > 1000) {
+    if (difference > 0) {
         difference -= 1000;
-        updateClockFace(convertMs(difference))
+        displayTime(convertMs(difference))
     }
     else {
-        clearInterval(intervalId)
+        stopTimer()
     }
 }
 
+function stopTimer() {
+   clearInterval(intervalId) 
+}
 
-function updateClockFace({ days, hours, minutes, seconds }) {
-    day.textContent = addZero(`${days}`);
-    hour.textContent = addZero(`${hours}`);
-    minute.textContent = addZero(`${minutes}`);
-    second.textContent = addZero(`${seconds}`)
+function displayTime({ days, hours, minutes, seconds }) {
+    dayElement.textContent = addLeadingZero(days);
+    hourElement.textContent = addLeadingZero(hours);
+    minuteElement.textContent = addLeadingZero(minutes);
+    secondElement.textContent = addLeadingZero(seconds)
 }
 
