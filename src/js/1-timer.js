@@ -51,7 +51,7 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-let difference = 0;
+let difference = null;
 let intervalId = 0;
 let userSelectedDate = null;
 // різниця часу
@@ -60,6 +60,7 @@ button.disabled = true;
 
 //Об'єкт параметрів для роботи з календарем
 const options = {
+    defaultDate: null,
     enableTime: true,
     time_24hr: true,
     minuteIncrement: 1,
@@ -75,10 +76,10 @@ const options = {
                 button.disabled = false;
                 difference = userSelectedDate - timeNow;
                 const { days, hours, minutes, seconds } = convertMs(difference);
-                dayElement.textContent = addZero(days);
-                hourElement.textContent = addZero(hours);
-                minuteElement.textContent = addZero(minutes);
-                secondElement.textContent = addZero(seconds);
+                dayElement.textContent = addLeadingZero(days);
+                hourElement.textContent = addLeadingZero(hours);
+                minuteElement.textContent = addLeadingZero(minutes);
+                secondElement.textContent = addLeadingZero(seconds);
             }
             else {
                 iziToast.error({
@@ -109,18 +110,15 @@ function startTimer() {
 }
 
 function timer() {
-    if (difference > 0) {
+    if (difference > 1000) {
         difference -= 1000;
         displayTime(convertMs(difference))
     }
     else {
-        stopTimer()
+        stopTimer();
     }
 }
 
-function stopTimer() {
-   clearInterval(intervalId) 
-}
 
 function displayTime({ days, hours, minutes, seconds }) {
     dayElement.textContent = addLeadingZero(days);
