@@ -60,8 +60,9 @@ input:hover {
 
 
 input:focus {
-    border-color: #4E75FF;
-    outline: none;
+border-color: #4E75FF;
+outline: none;
+color: #000;
 }
 
 button {
